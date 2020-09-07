@@ -1,0 +1,38 @@
+{% extends "todo_list/base.html" %}
+{% block content %}
+<h1 class="mb-3">Tasks of {{ view.kwargs.username }}</h1>
+	{%for task in tasks %}
+		<article class="media content-section">
+		  <div class="media-body">
+		    <div class="article-metadata">
+		      <small class="mr-2" href="#">Deadline: {{ task.due_date }}</small>
+		      <small class="text-muted"> Created : {{ task.created }}</small>
+			    </div>
+		    <h2><a class="article-title" href="{% url 'task-detail' task.id %}">{{ task.title }}</a></h2>
+		  </div>
+		<div>
+		  <p class="btn btn-sm mt-2 mb-3" href="#">{{ task.category }}</p>
+		  {% if task.status == 'Not Seen Yet' %}
+		  <p class="text-secondary" href="#">{{ task.status }}</p>
+		  {% elif task.status == 'Done' %}
+		  <p class="text-success" href="#">{{ task.status }}</p>
+		  {% elif task.status == 'Working on it' %}
+		  <p class="text-warning" href="#">{{ task.status }}</p>
+		  {% elif task.status == 'Stuck' %}
+		  <p class="text-danger" href="#">{{ task.status }}</p>
+		  {% endif %}
+		</div>
+		<div>
+	    {% if task.user == user %}
+	    <a class="btn btn-secondary btn-sm mt-2 mb-3" href="{% url 'task-update' task.id %}">Update</a>
+	  	<form action="{% url 'task-delete' task.id%}" method="POST">
+	  	{% csrf_token %}
+	  	<button class="btn-secondary btn-outline-danger" type="submit">Delete</button>
+	  	{% elif task.responsibles.user == user %}
+	  	<a class="btn btn-secondary btn-sm mt-2 mb-3" href="{% url 'task-update-low' task.id %}">Update</a>
+	  	</form>
+	  	{% endif %}
+	  </div>
+	</article>
+	{% endfor%}
+{% endblock content %}

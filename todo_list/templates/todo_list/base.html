@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'todo_list/main.css' %}">
+	{% if title %}
+	<title> Django To Do App - {{title}}</title>
+	{% else %}
+	<title> Django To Do App</title>
+	{% endif %}	
+</head>
+<body>	
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<nav class="navbar navbar-icon-top navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Navbar</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href= "{% url 'todo-list-home' %}">
+          <i class="fa fa-home"></i>
+          Home
+          <span class="sr-only">(current)</span>
+          </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'todo-list-about' %}">
+          About
+        </a>
+      </li>
+      {% if user.is_authenticated %}
+      {% if user.profile.rank == 'OF-1' or user.profile.rank == 'OF-2' %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'task-create'%}">
+         New Task
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'officer-tasks' user.username %}">
+         Manage Tasks
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'message-create' %}">
+         New Announcment
+        </a>
+      </li>
+      {% else %}
+      <li class="nav-item">
+      <a class="nav-link" href="{% url 'user-tasks' user.username%}">
+         My Tasks
+      </a>
+      </li>
+      {% endif %}
+      {% endif %}
+    </ul>
+    
+    {% if user.is_authenticated %}
+    <ul class="navbar-nav ">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'profile'%}">
+         Profile
+        </a>
+      </li>
+    </ul>
+    <ul class="navbar-nav ">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout'%}">
+          Logout
+        </a>
+      </li>
+    </ul>
+    {% else %}
+    <ul class="navbar-nav ">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'register'%}">
+          Register
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'login'%}">
+          Login
+        </a>
+      </li>
+    </ul>
+    {% endif %}
+  </div>
+</nav>
+
+  
+	<main role="main" class="container">
+	  <div class="row">
+	    <div class="col-md-8">
+	      {% block content %}{% endblock %}
+        <div>
+    {% if is_paginated%}
+    {% if page_obj.has_previous %}
+      <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range%}
+      {% if page_obj.number == num %}
+        <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+      <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+
+  {% endif %}
+        </div>
+	    </div>
+	    <div class="col-md-4">
+	      <div class="content-section">
+	        <h3>Our Sidebar</h3>
+	        <p class='text-muted'>You can put any information here you'd like.
+	          <ul class="list-group">
+	            <li class="list-group-item list-group-item-light">Latest Task</li>
+	            <li class="list-group-item list-group-item-light">Memo</li>
+	            <li class="list-group-item list-group-item-light">Calendars</li>
+	            <li class="list-group-item list-group-item-light">etc</li>
+	          </ul>
+	        </p>
+	      </div>
+	    </div>
+	  </div>
+	</main>
+</body>
+</html>
