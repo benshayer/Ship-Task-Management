@@ -11,6 +11,7 @@
 		      <a class="text-muted" href="{% url 'user-tasks' task.responsibles.user %}">{{ task.responsibles.user }}</a>
 			    </div>
 		    <h2><a class="article-title" href="{% url 'task-detail' task.id %}">{{ task.title }}</a></h2>
+		    <small class="text-muted"> Comments : {{ task.comments.count }}</small>
 		  </div>
 		<div>
 		  <p class="btn btn-sm mt-2 mb-3" href="#">{{ task.category }}</p>
@@ -25,15 +26,6 @@
 		  {% endif %}
 		</div>
 		<div>
-	    {% if task.user == user %}
-	    <a class="btn btn-secondary btn-sm mt-2 mb-3" href="{% url 'task-update' task.id %}">Update</a>
-	  	<form action="{% url 'task-delete' task.id%}" method="POST">
-	  	{% csrf_token %}
-	  	<button class="btn-secondary btn-outline-danger" type="submit">Delete</button>
-	  	{% elif task.responsibles.user == user %}
-	  	<a class="btn btn-secondary btn-sm mt-2 mb-3" href="{% url 'task-update-low' task.id %}">Update</a>
-	  	</form>
-	  	{% endif %}
 	  </div>
 		</article>
 	{% endfor %}

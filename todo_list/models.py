@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
-from users.models import Profile
+import users.models
 from django.contrib.auth import get_user_model
 
 #from project_todo_list.todo_list_app.users.models import Profile
@@ -14,6 +14,15 @@ class Category(models.Model): # The Category table name that inherits models.Mod
         verbose_name_plural = ("Categories")
     def __str__(self):
         return self.name #name to be shown when called
+
+class Department(models.Model): # The Department table name that inherits models.Model
+    name = models.CharField(max_length=100) #Like a varchar
+    class Meta:
+        verbose_name = ("Department")
+        verbose_name_plural = ("Departments")
+    def __str__(self):
+        return self.name #name to be shown when called
+
 
 class Announcement(models.Model): 
     title=models.CharField(max_length=250)
@@ -38,7 +47,8 @@ class TodoList(models.Model): #Todolist able name that inherits models.Model
     category = models.ForeignKey(Category, default="general",on_delete=models.CASCADE) # a foreignkey
     status = models.CharField(max_length=100,choices=statuses,default='Not Seen Yet')
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    responsibles=models.ForeignKey(Profile, on_delete=models.CASCADE,default=2)
+    responsibles=models.ForeignKey('users.Profile', on_delete=models.CASCADE, related_name="responsible")
+    deadline=models.BooleanField(default=False)
 
 
 
@@ -47,3 +57,18 @@ class TodoList(models.Model): #Todolist able name that inherits models.Model
 
     def get_absolute_url(self):
         return reverse('task-detail', kwargs={'pk': self.pk})
+
+
+class Comment(models.Model): # The Category table name that inherits models.Model
+    task = models.ForeignKey(TodoList,on_delete=models.CASCADE, related_name='comments')
+    authour=models.ForeignKey(User, on_delete=models.CASCADE)
+    text=models.TextField(blank=True)
+    created= models.DateTimeField(default=timezone.now)
+    active=models.BooleanField(default=False)
+
+    def approve(self):
+        self.approved_comment= True
+        self.save()
+
+    def __str__(self):
+        return self.text #name to be shown when called
