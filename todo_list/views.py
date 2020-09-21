@@ -39,7 +39,9 @@ class OfficerTodoListView(ListView):
 
 	def get_queryset(self):
 		user1 = get_object_or_404(User, username=self.kwargs.get('username'))
-		return TodoList.objects.filter(user=user1).order_by('due_date')
+		q1 = TodoList.objects.filter(user=user1)
+		q2 = TodoList.objects.filter(responsibles=user1.profile)
+		return q1.union(q2).order_by('due_date')
 
 
 def task_detail(request, pk):
